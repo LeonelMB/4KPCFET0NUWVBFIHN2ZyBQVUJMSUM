@@ -45,7 +45,7 @@ function initLight() {
 
 function initEarth() {
     // Load Earth texture and create material from it
-    var earthTexture = THREE.ImageUtils.loadTexture("/images/earthmap1k.jpg");
+    var earthTexture = THREE.ImageUtils.loadTexture("./images/earthmap1k.jpg");
     earthTexture.minFilter = THREE.NearestFilter;
     var earthMaterial = new THREE.MeshLambertMaterial({
         map: earthTexture,
@@ -61,7 +61,7 @@ function initEarth() {
 }
 
 function initMoon() {
-    var moonTexture = THREE.ImageUtils.loadTexture("/images/moonmap1k-lowres.jpg");
+    var moonTexture = THREE.ImageUtils.loadTexture("./images/moonmap1k-lowres.jpg");
     moonTexture.minFilter = THREE.NearestFilter;
     var moonMaterial = new THREE.MeshLambertMaterial({
         map: moonTexture,
