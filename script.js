@@ -38,7 +38,7 @@ function startCamera() {
             streaming = true;
             vc = new cv.VideoCapture(video);
             widthScene = width;
-            heightScene = height;
+            heightScene = video.videoHeight;
         }
         startVideoProcessing();
     }, false);
