@@ -3,7 +3,7 @@ let width = 640;
 let height = 0;
 
 let widthScene = 640;
-let heightScene = 960;
+let heightScene = 1200;
 
 // whether streaming video from the camera.
 let streaming = false;
