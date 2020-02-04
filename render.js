@@ -28,8 +28,7 @@ function init(width, height) {
     renderer.domElement.style.position = 'absolute'; // required
     renderer.domElement.style.top = "0px";
     renderer.domElement.style.left = "0px";
-	renderer.domElement.style.zIndex = "1"; // required
-	console.log(width, height,"Scene->",widthScene,heightScene)
+    renderer.domElement.style.zIndex = "1"; // required
     renderer.setSize(width, height);
     renderer.shadowMap.enabled = true;
     document.body.appendChild(renderer.domElement);
@@ -194,12 +193,14 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
             video.oncanplay = function() {
                 init(video.clientWidth, video.clientHeight);
-                initEarth();
-                initMoon();
-                initLight();
-                initPlane();
+                setTimeout(function() {
+                    initEarth();
+                    initMoon();
+                    initLight();
+                    initPlane();
+                    requestAnimationFrame(render);
+                }, 3000)
 
-                requestAnimationFrame(render);
             }
 
         }, function() {});
