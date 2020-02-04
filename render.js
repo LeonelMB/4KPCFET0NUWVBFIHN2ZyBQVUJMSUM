@@ -26,8 +26,8 @@ function init(width, height) {
 
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.domElement.style.position = 'absolute'; // required
-    renderer.domElement.style.top = "386px";
-    renderer.domElement.style.left = "7px";
+    renderer.domElement.style.top = "0px";
+    renderer.domElement.style.left = "0px";
     renderer.domElement.style.zIndex = "1"; // required
     renderer.setSize(width, height);
     renderer.shadowMap.enabled = true;

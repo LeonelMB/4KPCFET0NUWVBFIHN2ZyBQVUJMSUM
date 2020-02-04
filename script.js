@@ -20,7 +20,6 @@ function startCamera() {
         audio: false,
         video: { facingMode: "environment" }
     }
-    console.log(constraints)
     navigator.mediaDevices.getUserMedia(constraints)
         .then(function(s) {
             stream = s;
