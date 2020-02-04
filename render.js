@@ -10,7 +10,7 @@ var moonMesh;
 var positionHistory = [];
 var lastPos, diffMove, lastEarthScale;
 var ping = 0;
-
+var counter = 0;
 
 function init(width, height) {
 
@@ -18,7 +18,9 @@ function init(width, height) {
     width = widthScene;
     height = heightScene;
     scene = new THREE.Scene();
-    // Setup cameta with 45 deg field of view and same aspect ratio
+    counter += 1;
+    if (counter < 2) return
+        // Setup cameta with 45 deg field of view and same aspect ratio
     var aspect = width / height;
     camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 1000);
     // Set the camera to 400 units along `z` axis
@@ -190,10 +192,9 @@ document.addEventListener('DOMContentLoaded', function(event) {
         navigator.getUserMedia(constrains, function(stream) {
             video.srcObject = stream;
             //video.src = window.URL.createObjectURL(stream);
-
             video.oncanplay = function() {
-                init(video.clientWidth, video.clientHeight);
                 setTimeout(function() {
+                    init(video.clientWidth, video.clientHeight);
                     initEarth();
                     initMoon();
                     initLight();
