@@ -28,7 +28,8 @@ function init(width, height) {
     renderer.domElement.style.position = 'absolute'; // required
     renderer.domElement.style.top = "0px";
     renderer.domElement.style.left = "0px";
-    renderer.domElement.style.zIndex = "1"; // required
+	renderer.domElement.style.zIndex = "1"; // required
+	console.log(width, height,"Scene->",widthScene,heightScene)
     renderer.setSize(width, height);
     renderer.shadowMap.enabled = true;
     document.body.appendChild(renderer.domElement);
