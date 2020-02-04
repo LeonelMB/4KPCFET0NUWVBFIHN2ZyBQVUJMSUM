@@ -1,8 +1,8 @@
 // In this case, We set width 320, and the height will be computed based on the input stream.
-let width = 320;
+let width = 640;
 let height = 0;
 
-let widthScene = 320;
+let widthScene = 640;
 let heightScene = 240;
 
 // whether streaming video from the camera.
@@ -49,8 +49,8 @@ let dstC4 = null;
 sc = 1
 md = 30
 at = 40
-t = 100
-w = 640.0
+t = 80
+w = 320.0
 
 
 function startVideoProcessing() {
@@ -65,28 +65,56 @@ function startVideoProcessing() {
 
 function passThrough(src) {
     let color = new cv.Scalar(0, 0, 255);
-
     let circles = new cv.Mat(height, width, cv.CV_8UC4);
+    const dst = new cv.Mat();
 
-    // Apply filters
-    cv.cvtColor(src, dstC1, cv.COLOR_BGR2GRAY);
-    // Applying MedianBlur on the Image
-    cv.medianBlur(dstC1, dstC4, 15);
+    try {
+        // change to hsv colorspace
+        const hsv = new cv.Mat();
+        cv.cvtColor(src, hsv, cv.COLOR_BGR2HSV)
+            // HSV yellow range
+        const lower_white = [10, 100, 100, 255];
+        const upper_white = [100, 255, 255, 255];
+        // HSV range filters
+        const low = new cv.Mat(hsv.rows, hsv.cols, hsv.type(), lower_white);
+        const high = new cv.Mat(hsv.rows, hsv.cols, hsv.type(), upper_white);
+        // filter by range
+        cv.inRange(hsv, low, high, dst);
+        // Searching circles
+        cv.medianBlur(dst, dstC4, 3);
+        cv.HoughCircles(dstC4, circles, cv.HOUGH_GRADIENT, 1, hsv.rows / 64, 50, 20);
 
-    cv.HoughCircles(dstC4, circles, cv.HOUGH_GRADIENT, sc, md, t, at)
-
-    if (circles.size().width > 0) {
-        // draw circles
-        for (let i = 0; i < circles.cols; ++i) {
-            let x = circles.data32F[i * 3];
-            let y = circles.data32F[i * 3 + 1];
-            let radius = circles.data32F[i * 3 + 2];
-            let center = new cv.Point(x, y);
-            cv.circle(src, center, radius, color, thickness = 1);
-            renderEarth(x / width, y / height, radius / width + 0.5);
+        if (circles.size().width > 5) {
+            let xPointMean = 0;
+            let yPointMean = 0;
+            let radiusMean = 0;
+            let NofPoints = circles.cols;
+            // draw circles 
+            for (let i = 0; i < circles.cols; ++i) {
+                let x = circles.data32F[i * 3];
+                let y = circles.data32F[i * 3 + 1];
+                let radius = circles.data32F[i * 3 + 2];
+                let center = new cv.Point(x, y);
+                cv.circle(src, center, radius, color, thickness = 1);
+                xPointMean += x;
+                yPointMean += y;
+                radiusMean += radius;
+            }
+            xPointMean = xPointMean / NofPoints;
+            yPointMean = yPointMean / NofPoints;
+            /* radiusMean = radiusMean / N;*/
+            //  get the mean point of the circles
+            cv.circle(src, new cv.Point(xPointMean, yPointMean), radiusMean, color, thickness = 1);
+            renderEarth(xPointMean / width, yPointMean / height, radiusMean / width);
+        } else {
+            circles.delete();
         }
-    } else {
-        circles.delete();
+        dst.delete();
+        low.delete();
+        high.delete();
+        hsv.delete();
+    } catch (e) {
+        console.warn(e)
     }
     return src;
 }

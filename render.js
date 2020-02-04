@@ -26,7 +26,7 @@ function init(width, height) {
 
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.domElement.style.position = 'absolute'; // required
-    renderer.domElement.style.top = "276px";
+    renderer.domElement.style.top = "386px";
     renderer.domElement.style.left = "7px";
     renderer.domElement.style.zIndex = "1"; // required
     renderer.setSize(width, height);
@@ -167,13 +167,6 @@ function render() {
     // Schedule another frame
     requestAnimationFrame(render);
 }
-
-//function onDocumentMouseMove(event) {
-//    // Current mouse position with [0,0] in the center of the document
-//    // and ranging from -1.0 to +1.0 with `y` axis inverted.
-//    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-//    mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
-//}
 
 document.addEventListener('DOMContentLoaded', function(event) {
     // Initialize everything and start rendering
