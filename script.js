@@ -40,7 +40,7 @@ function startCamera() {
             widthScene = width;
             heightScene = video.videoHeight;
             console.log(video.videoHeight, height, video.videoWidth)
-            document.getElementById("debug").innerHTML = String(video.videoHeight) + " " + String(height) + " " + String(video.videoWidth);
+            document.getElementById("debug").innerHTML = String(video.videoHeight) + " " + String(height) + " " + String(heightScene) + " "+ String(video.videoWidth);
 
         }
         startVideoProcessing();
