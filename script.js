@@ -32,16 +32,14 @@ function startCamera() {
 
     video.addEventListener("canplay", function(ev) {
         if (!streaming) {
-            height = video.videoHeight / (video.videoWidth / width);
+            height = video.videoHeight /// (video.videoWidth / width);
             video.setAttribute("width", width);
             video.setAttribute("height", height);
             streaming = true;
             vc = new cv.VideoCapture(video);
             widthScene = width;
             heightScene = video.videoHeight;
-            console.log(video.videoHeight, height, video.videoWidth)
             document.getElementById("debug").innerHTML = String(video.videoHeight) + " " + String(height) + " " + String(heightScene) + " "+ String(video.videoWidth);
-
         }
         startVideoProcessing();
     }, false);
