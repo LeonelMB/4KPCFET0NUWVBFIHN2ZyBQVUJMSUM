@@ -39,6 +39,7 @@ function startCamera() {
             vc = new cv.VideoCapture(video);
             widthScene = width;
             heightScene = video.videoHeight;
+            console.log(video.videoHeight, height, video.videoWidth)
         }
         startVideoProcessing();
     }, false);
