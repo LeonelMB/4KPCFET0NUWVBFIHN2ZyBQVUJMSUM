@@ -93,7 +93,7 @@ function update() {
     }
 
 
-    earthRotY += 0.007;
+    earthRotY += 0.014;
 
     ping++;
     if (ping < 10) {
