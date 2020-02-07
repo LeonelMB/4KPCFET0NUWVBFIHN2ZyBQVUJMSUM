@@ -1,5 +1,5 @@
 // In this case, We set width 320, and the height will be computed based on the input stream.
-let width = 640;
+let width = 1280;
 let height = 0;
 
 let widthScene = 640;
