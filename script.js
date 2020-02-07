@@ -2,8 +2,8 @@
 let width = 640;
 let height = 0;
 
-let widthScene = 640;
-let heightScene = 1200;
+let widthScene = window.innerWidth;
+let heightScene = window.innerHeight;
 
 // whether streaming video from the camera.
 let streaming = false;
@@ -37,9 +37,12 @@ function startCamera() {
             video.setAttribute("height", height);
             streaming = true;
             vc = new cv.VideoCapture(video);
-            widthScene = width;
-            heightScene = video.videoHeight;
-            document.getElementById("debug").innerHTML = String(video.videoHeight) + " " + String(height) + " " + String(heightScene) + " "+ String(video.videoWidth);
+            //widthScene = width;
+            //var w = window.innerWidth;
+            //var h = window.innerHeight;
+            //console.log(w, h)
+            //heightScene = video.videoHeight;
+            document.getElementById("debug").innerHTML = String(video.videoHeight) + " " + String(height) + " " + String(heightScene) + " " + String(video.videoWidth);
         }
         startVideoProcessing();
     }, false);
