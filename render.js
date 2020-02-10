@@ -11,6 +11,32 @@ var positionHistory = [];
 var lastPos, diffMove, lastEarthScale;
 var ping = 0;
 var counter = 0;
+var rendererY;
+var cameraY, sceneY;
+var groupYoutube;
+
+
+var Element = function(id, x, y, z, ry) {
+
+    var div = document.createElement('div');
+    div.style.width = '240px';
+    div.style.height = '180px';
+    div.style.backgroundColor = '#000';
+
+    var iframe = document.createElement('iframe');
+    iframe.style.width = '240px';
+    iframe.style.height = '180px';
+    iframe.style.border = '0px';
+    iframe.src = ['https://www.youtube.com/embed/', id, '?rel=0'].join('');
+    div.appendChild(iframe);
+
+    var object = new THREE.CSS3DObject(div);
+    object.position.set(x, y, z);
+    object.rotation.y = ry;
+
+    return object;
+
+};
 
 function init(width, height) {
 
@@ -18,9 +44,9 @@ function init(width, height) {
     width = widthScene;
     height = heightScene;
     scene = new THREE.Scene();
-    counter += 1;
-    if (counter < 2) return
-        // Setup cameta with 45 deg field of view and same aspect ratio
+    // counter += 1;
+    // if (counter < 2) return
+    // Setup cameta with 45 deg field of view and same aspect ratio
     var aspect = width / height;
     camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 1000);
     // Set the camera to 400 units along `z` axis
@@ -59,7 +85,7 @@ function initEarth() {
     earthMesh.receiveShadow = true;
     earthMesh.castShadow = true;
     // Add Earth to the scene
-    scene.add(earthMesh);
+    //scene.add(earthMesh);
 }
 
 function initMoon() {
@@ -72,7 +98,26 @@ function initMoon() {
     moonMesh = new THREE.Mesh(moonGeometry, moonMaterial);
     moonMesh.receiveShadow = true;
     moonMesh.castShadow = true;
-    scene.add(moonMesh);
+    //scene.add(moonMesh);
+}
+
+function initYoutube() {
+
+    var container = document.getElementById('youtube');
+    sceneY = new THREE.Scene();
+
+    groupYoutube = new THREE.Group();
+    groupYoutube.add(new Element('SJOz3qjfQXU', 0, 0, 0, 0));
+    groupYoutube.children[0].rotation.z = 3.14159; // 3DObject is 180 degrees defased so pi value fix it
+    sceneY.add(groupYoutube);
+
+    rendererY = new THREE.CSS3DRenderer();
+    rendererY.setSize(window.innerWidth, window.innerHeight);
+    rendererY.domElement.style.position = 'absolute'; // required
+    rendererY.domElement.style.top = "0px";
+    rendererY.domElement.style.left = "0px";
+    rendererY.domElement.style.zIndex = "2"; // required
+    container.appendChild(rendererY.domElement);
 }
 
 function initPlane() {
@@ -115,6 +160,10 @@ function update() {
         earthMesh.position.x = point.x;
         earthMesh.position.y = point.y;
 
+        if (groupYoutube.children[0]) {
+            groupYoutube.children[0].position.x = point.x;
+            groupYoutube.children[0].position.y = point.y;
+        }
         // X pos + radius
         var vector = new THREE.Vector3(lastPos[0] + lastPos[2], lastPos[1], 0.5);
         var intersect = checkIntersect(vector);
@@ -124,6 +173,10 @@ function update() {
 
         earthMesh.scale.set(earthScale, earthScale, earthScale);
         moonMesh.scale.set(earthScale, earthScale, earthScale);
+
+        if (groupYoutube.children[0]) {
+            groupYoutube.children[0].scale.set(earthScale, earthScale, earthScale);
+        }
 
         lastEarthScale = earthScale;
     }
@@ -164,10 +217,14 @@ function checkIntersect(vector) {
 function render() {
     update();
 
-    renderer.setClearColor(0x000000, 0);
-    renderer.render(scene, camera);
-    // Schedule another frame
-    requestAnimationFrame(render);
+    if (renderer) {
+        renderer.setClearColor(0x000000, 0);
+        renderer.render(scene, camera);
+        requestAnimationFrame(render);
+    }
+    if (rendererY) {
+        rendererY.render(sceneY, camera);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function(event) {
@@ -199,6 +256,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
                     initMoon();
                     initLight();
                     initPlane();
+                    initYoutube();
                     requestAnimationFrame(render);
                 }, 3000)
 

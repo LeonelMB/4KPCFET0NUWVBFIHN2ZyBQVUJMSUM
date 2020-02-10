@@ -16,11 +16,11 @@ function startCamera() {
     if (streaming) return;
     navigator.mediaDevices.enumerateDevices()
         .then(devices => { console.log("e->", devices) })
-    var constraints = {
+    var constrains = {
         audio: false,
         video: { facingMode: "environment" }
     }
-    navigator.mediaDevices.getUserMedia(constraints)
+    navigator.mediaDevices.getUserMedia(constrains)
         .then(function(s) {
             stream = s;
             video.srcObject = s;
