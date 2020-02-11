@@ -5,6 +5,7 @@ let height = 0;
 let widthScene = window.innerWidth;
 let heightScene = window.innerHeight;
 
+let IS_THREE_JS_LOADED = false;
 // whether streaming video from the camera.
 let streaming = false;
 
@@ -15,12 +16,12 @@ let vc = null;
 function startCamera() {
     if (streaming) return;
     navigator.mediaDevices.enumerateDevices()
-        .then(devices => { console.log("e->", devices) })
-    var constraints = {
+        .then(devices => {})
+    var constrains = {
         audio: false,
         video: { facingMode: "environment" }
     }
-    navigator.mediaDevices.getUserMedia(constraints)
+    navigator.mediaDevices.getUserMedia(constrains)
         .then(function(s) {
             stream = s;
             video.srcObject = s;
@@ -67,59 +68,60 @@ function startVideoProcessing() {
 }
 
 function passThrough(src) {
+    if (!IS_THREE_JS_LOADED) {
+        return src;
+    }
     let color = new cv.Scalar(0, 0, 255);
-    let circles = new cv.Mat(height, width, cv.CV_8UC4);
-    const dst = new cv.Mat();
+    let xPointMean = 0;
+    let yPointMean = 0;
+    let radiusMean = 0;
+    let NofPoints = 0;
+    cv.cvtColor(src, dstC1, cv.COLOR_RGBA2GRAY);
+    cv.threshold(dstC1, dstC4, 120, 200, cv.THRESH_BINARY);
+    let contours = new cv.MatVector();
+    let hierarchy = new cv.Mat();
+    cv.findContours(dstC4, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE, { x: 0, y: 0 });
+    dstC3.delete();
+    dstC3 = cv.Mat.ones(height, width, cv.CV_8UC3);
+    for (let i = 0; i < contours.size(); ++i) {
+        let k = i;
+        let c = 0;
 
-    try {
-        // change to hsv colorspace
-        const hsv = new cv.Mat();
-        cv.cvtColor(src, hsv, cv.COLOR_BGR2HSV)
-            // HSV yellow range
-        const lower_white = [10, 100, 100, 255];
-        const upper_white = [100, 255, 255, 255];
-        // HSV range filters
-        const low = new cv.Mat(hsv.rows, hsv.cols, hsv.type(), lower_white);
-        const high = new cv.Mat(hsv.rows, hsv.cols, hsv.type(), upper_white);
-        // filter by range
-        cv.inRange(hsv, low, high, dst);
-        // Searching circles
-        cv.medianBlur(dst, dstC4, 3);
-        cv.HoughCircles(dstC4, circles, cv.HOUGH_GRADIENT, 1, hsv.rows / 64, 50, 20);
+        while (hierarchy.intPtr(0, k)[2] !== -1) {
+            k = hierarchy.intPtr(0, k)[2]
+            c = c + 1;
+        }
 
-        if (circles.size().width > 5) {
-            let xPointMean = 0;
-            let yPointMean = 0;
-            let radiusMean = 0;
-            let NofPoints = circles.cols;
-            // draw circles 
-            for (let i = 0; i < circles.cols; ++i) {
-                let x = circles.data32F[i * 3];
-                let y = circles.data32F[i * 3 + 1];
-                let radius = circles.data32F[i * 3 + 2];
-                let center = new cv.Point(x, y);
-                cv.circle(src, center, radius, color, thickness = 1);
+        if (hierarchy.intPtr(0, k)[2] !== -1) {
+            c = c + 1;
+        }
+        if (c >= 2) {
+            NofPoints += 1;
+            let color = contoursColor[i];
+            let cnt = contours.get(i)
+            let rect = cv.boundingRect(cnt);
+            let rectangleColor = new cv.Scalar(255, 0, 0);
+            let point1 = new cv.Point(rect.x, rect.y);
+            let point2 = new cv.Point(rect.x + rect.width, rect.y + rect.height);
+            let x = rect.x;
+            let y = rect.y;
+            let radius = (rect.x + rect.width) / 8;
+            let area = cv.contourArea(cnt, false);
+            if (area > 100 && area < 3600) {
+                cv.rectangle(dstC3, point1, point2, rectangleColor, 2, cv.LINE_AA, 0);
+                cv.drawContours(dstC3, contours, i, color, 1, cv.LINE_8, hierarchy);
                 xPointMean += x;
                 yPointMean += y;
                 radiusMean += radius;
+                cv.circle(dstC3, new cv.Point(x, y), radius, color, thickness = 1);
+                renderEarth(x / width, y / height, radius / 128);
             }
-            xPointMean = xPointMean / NofPoints;
-            yPointMean = yPointMean / NofPoints;
-            /* radiusMean = radiusMean / N;*/
-            //  get the mean point of the circles
-            cv.circle(src, new cv.Point(xPointMean, yPointMean), radiusMean, color, thickness = 1);
-            renderEarth(xPointMean / width, yPointMean / height, radiusMean / width);
-        } else {
-            circles.delete();
         }
-        dst.delete();
-        low.delete();
-        high.delete();
-        hsv.delete();
-    } catch (e) {
-        console.warn(e)
     }
-    return src;
+    contours.delete();
+    hierarchy.delete();
+    // return dstC3;
+    return dstC3;
 }
 
 function renderEarth(x, y, radius) {
