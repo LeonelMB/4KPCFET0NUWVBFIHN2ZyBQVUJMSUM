@@ -11,37 +11,39 @@
 <body>
 
     <body>
-        <div id="container" style="visibility:hidden">
-                <table cellpadding="0" cellspacing="0" width="100%" border="0">
-                    <tr>
-                        <td></td>
-                        <td>
-                            <div class="text-center">
-                                <span>Current Filter: </span><span id="filterName">Pass Through</span>
-                            </div>
-                        </td>
-                        <td>
-                            <div>Select Filter:</div>
-                        </td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td>
-                            <canvas class="center-block" id="canvasOutput" width=320 height=240></canvas>
-                        </td>
-                        <td>
-                            <div id="guiContainer"></div>
-                        </td>
-                        <td></td>
-                    </tr>
-                </table>
+        <!-- <div id="container" style="visibility:hidden"> -->
+        <div id="container">
 
-            </div>
-            <div>
-                <video id="video" style="position: absolute;top: 0px;left: 0px;width: 100%;height: 100%;" autoplay loop muted playsinline>Your browser does not support the video tag.</video>
-            </div>
-            <div id="youtube"></div>
+            <table cellpadding="0" cellspacing="0" width="100%" border="0">
+                <tr>
+                    <td></td>
+                    <td>
+                        <div class="text-center">
+                            <span>Current Filter: </span><span id="filterName">Pass Through</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div>Select Filter:</div>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <canvas class="center-block" id="canvasOutput" width=320 height=240></canvas>
+                    </td>
+                    <td>
+                        <div id="guiContainer"></div>
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+
+        </div>
+        <div style="visibility:hidden">
+            <video id="video" style="position: absolute;top: 0px;left: 0px;width: 100%;height: 100%;" autoplay loop muted playsinline>Your browser does not support the video tag.</video>
+        </div>
+        <div id="youtube" style="visibility:hidden"></div>
     </body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/2.4.0/math.min.js"></script>
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
