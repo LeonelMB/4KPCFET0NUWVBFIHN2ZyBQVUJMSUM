@@ -19,13 +19,13 @@ var groupYoutube;
 var Element = function(id, x, y, z, ry) {
 
     var div = document.createElement('div');
-    div.style.width = '240px';
-    div.style.height = '180px';
+    div.style.width = '120px';
+    div.style.height = '90px';
     div.style.backgroundColor = '#000';
 
     var iframe = document.createElement('iframe');
-    iframe.style.width = '240px';
-    iframe.style.height = '180px';
+    iframe.style.width = '120px';
+    iframe.style.height = '90px';
     iframe.style.border = '0px';
     iframe.src = ['https://www.youtube.com/embed/', id, '?rel=0'].join('');
     div.appendChild(iframe);
@@ -44,8 +44,8 @@ function init(width, height) {
     width = widthScene;
     height = heightScene;
     scene = new THREE.Scene();
-    // counter += 1;
-    // if (counter < 2) return
+    counter += 1;
+    if (counter < 2) return
     // Setup cameta with 45 deg field of view and same aspect ratio
     var aspect = width / height;
     camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 1000);
@@ -98,10 +98,12 @@ function initMoon() {
     moonMesh = new THREE.Mesh(moonGeometry, moonMaterial);
     moonMesh.receiveShadow = true;
     moonMesh.castShadow = true;
-    //scene.add(moonMesh);
+    // scene.add(moonMesh);
 }
 
 function initYoutube() {
+    width = widthScene;
+    height = heightScene;
 
     var container = document.getElementById('youtube');
     sceneY = new THREE.Scene();
@@ -117,6 +119,7 @@ function initYoutube() {
     rendererY.domElement.style.top = "0px";
     rendererY.domElement.style.left = "0px";
     rendererY.domElement.style.zIndex = "2"; // required
+    // rendererY.shadowMap.enabled = true;
     container.appendChild(rendererY.domElement);
 }
 
@@ -161,7 +164,7 @@ function update() {
         earthMesh.position.y = point.y;
 
         if (groupYoutube.children[0]) {
-            groupYoutube.children[0].position.x = point.x;
+            groupYoutube.children[0].position.x = point.x * -2.5;
             groupYoutube.children[0].position.y = point.y;
         }
         // X pos + radius
@@ -216,15 +219,15 @@ function checkIntersect(vector) {
 // Redraw entire scene
 function render() {
     update();
-
+    if (rendererY) {
+        rendererY.render(sceneY, camera);
+    }
     if (renderer) {
         renderer.setClearColor(0x000000, 0);
         renderer.render(scene, camera);
         requestAnimationFrame(render);
     }
-    if (rendererY) {
-        rendererY.render(sceneY, camera);
-    }
+    IS_THREE_JS_LOADED = true;
 }
 
 document.addEventListener('DOMContentLoaded', function(event) {
